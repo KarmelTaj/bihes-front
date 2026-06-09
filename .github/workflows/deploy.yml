@@ -1,0 +1,16 @@
+name: Deploy
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Pull and restart
+        run: |
+          set -e
+          cd /var/www/react-front
+          git pull origin develop
+          npm install
