@@ -13,9 +13,24 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Debug node
+        shell: bash
+        run: |
+          whoami
+          echo "HOME=$HOME"
+          command -v node || true
+          command -v npm || true
+          ls -la "$HOME/.nvm" || true
+
       - name: Pull, build, and restart
+        shell: bash
         run: |
           set -e
+
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+          nvm use 20
 
           cd /var/www/react-front
 
