@@ -13,15 +13,6 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Debug node
-        shell: bash
-        run: |
-          whoami
-          echo "HOME=$HOME"
-          command -v node || true
-          command -v npm || true
-          ls -la "$HOME/.nvm" || true
-
       - name: Pull, build, and restart
         shell: bash
         run: |
@@ -33,12 +24,10 @@ jobs:
           nvm use 20
 
           cd /var/www/react-front
-
           git fetch origin develop
           git reset --hard origin/develop
 
           cd /var/www/react-front/bihes-front
-
           npm ci
           npm run build
 
