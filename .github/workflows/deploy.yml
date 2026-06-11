@@ -4,13 +4,27 @@ on:
   push:
     branches: [develop]
 
+concurrency:
+  group: deploy-develop
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: self-hosted
+
     steps:
-      - name: Pull and restart
+      - name: Pull, build, and restart
         run: |
           set -e
+
           cd /var/www/react-front
-          git pull origin develop
-          npm install
+
+          git fetch origin develop
+          git reset --hard origin/develop
+
+          cd /var/www/react-front/bihes-front
+
+          npm ci
+          npm run build
+
+          sudo systemctl reload nginx
