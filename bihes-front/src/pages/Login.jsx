@@ -1,13 +1,17 @@
 import { useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { colors } from "../theme/colors";
+import { useAuth } from "../auth/useAuth";
+import { ApiError } from "../api/client";
+import logoUrl from "../assets/Logo.png";
+import cupUrl from "../assets/cup.png";
 import "./Login.css";
-import { Link } from "react-router-dom";
 
 
 
 function LogoMark() {
   return (
-    <img src="/src/assets/Logo.png"/>
+    <img src={logoUrl} alt="ChocoBrew" />
   );
 }
 
@@ -67,15 +71,49 @@ const GoogleIcon = () => (
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  // One field, either credential: the backend resolves an email to its username.
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(true);
+  const [error, setError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { login, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Where RequireAuth bounced them from, if anywhere.
+  const destination = location.state?.from?.pathname ?? "/";
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    console.log({ email, password, remember });
+    if (submitting) return;
+
+    setError(null);
+    setSubmitting(true);
+
+    try {
+      await login({ identifier: identifier.trim(), password, remember });
+      navigate(destination, { replace: true });
+    } catch (cause) {
+      setError(
+        cause instanceof ApiError
+          ? cause
+          : new ApiError({
+              status: 0,
+              generalErrors: ["Unexpected error. Please try again."],
+            }),
+      );
+      setSubmitting(false);
+    }
   };
+
+  // Already signed in — nothing to do on this page.
+  if (!isLoading && isAuthenticated) return <Navigate to={destination} replace />;
+
+  const identifierError = error?.fieldError("username");
+  const passwordError = error?.fieldError("password");
+  const generalErrors = error?.generalErrors ?? [];
 
   return (
     <div className="page">
@@ -83,7 +121,7 @@ export default function LoginPage() {
         {/* Left brand panel */}
         <div className="brand-panel">
           <div className="brand-art">
-            <img src="/src/assets/cup.png"/>
+            <img src={cupUrl} alt="" aria-hidden="true" />
           </div>
 
           <div className="brand-content">
@@ -122,34 +160,51 @@ export default function LoginPage() {
           <p className="form-subtitle">Enter your credentials to continue</p>
 
           <form onSubmit={handleSubmit} className="form">
+            {generalErrors.length > 0 && (
+              <div className="form-alert" role="alert">
+                {generalErrors.map((message) => (
+                  <p key={message}>{message}</p>
+                ))}
+              </div>
+            )}
+
             <div className="field">
-              <label className="label">Email</label>
+              <label className="label" htmlFor="identifier">Email or username</label>
               <div className="input-wrap">
                 <span className="input-icon">
                   <MailIcon />
                 </span>
                 <input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="identifier"
+                  name="identifier"
+                  type="text"
+                  autoComplete="username"
+                  placeholder="Enter your email or username"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   className="input"
+                  required
                 />
               </div>
+              {identifierError && <p className="field-error">{identifierError}</p>}
             </div>
 
             <div className="field">
-              <label className="label">Password</label>
+              <label className="label" htmlFor="password">Password</label>
               <div className="input-wrap">
                 <span className="input-icon">
                   <LockIcon />
                 </span>
                 <input
+                  id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="input"
+                  required
                 />
                 <button
                   type="button"
@@ -158,13 +213,15 @@ export default function LoginPage() {
                   aria-label="Toggle password visibility"
                 >
                   <EyeIcon off={showPassword} />
-                  {/* <ProgressRing percentage={50}/> */}
                 </button>
               </div>
+              {passwordError && <p className="field-error">{passwordError}</p>}
             </div>
 
             <div className="row-between">
               <label className="checkbox-label">
+                {/* Ticked keeps the session in localStorage; unticked drops it
+                    when the tab closes. */}
                 <input
                   type="checkbox"
                   checked={remember}
@@ -177,13 +234,9 @@ export default function LoginPage() {
               </a>
             </div>
 
-            {/* <button type="submit" className="btn-primary">
-              Log In
-            </button> */}
-
-            <Link to="/" className="btn-primary btn-login">
-              Login
-            </Link>
+            <button type="submit" className="btn-primary" disabled={submitting}>
+              {submitting ? "Logging in…" : "Log In"}
+            </button>
 
             <div className="or-divider">
               <span className="line" />
@@ -191,13 +244,18 @@ export default function LoginPage() {
               <span className="line" />
             </div>
 
-            <button type="button" className="btn-google">
+            <button
+              type="button"
+              className="btn-google"
+              disabled
+              title="Google sign-in is not wired up on the backend yet."
+            >
               <GoogleIcon />
               <span>Continue with Google</span>
             </button>
 
             <p className="signup-text">
-              Don&apos;t have an account? <a href="#" className="link-signup">Sign up</a>
+              Don&apos;t have an account? <Link to="/register" className="link-signup">Sign up</Link>
             </p>
           </form>
         </div>

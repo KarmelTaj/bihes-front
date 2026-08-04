@@ -1,7 +1,17 @@
-import { useRef, useState } from "react";
-import { colors } from "../theme/colors";
-import "./Home.css";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { colors } from "../theme/colors";
+import { fetchMenuItems } from "../api/menu";
+import { ApiError } from "../api/client";
+import { useAuth } from "../auth/useAuth";
+import { useCart } from "../cart/useCart";
+import { formatPrice } from "../lib/format";
+import cupUrl from "../assets/cup.png";
+import bbqUrl from "../assets/products/bbq-chicken-pizza.jpg";
+import margheritaUrl from "../assets/products/margherita-pizza.jpg";
+import pepperoniUrl from "../assets/products/pepperoni-pizza.jpg";
+import veggieUrl from "../assets/products/veggie-supreme.jpg";
+import "./Home.css";
 
 /* ---------------- Icons ---------------- */
 
@@ -61,6 +71,13 @@ const PlusIcon = () => (
   </svg>
 );
 
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="m6 6 12 12M18 6 6 18" />
+  </svg>
+);
+
 const BeanIcon = () => (
   <svg viewBox="0 0 24 24" width="26" height="26" fill="none"
     stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
@@ -107,36 +124,12 @@ const NAV_LINKS = [
   { label: "Contact", href: "#contact" },
 ];
 
-const PRODUCTS = [
-  {
-    id: 1,
-    name: "Royal Latte",
-    desc: "Smooth espresso with steamed milk",
-    price: 4.99,
-    img: "/src/assets/products/bbq-chicken-pizza.jpg",
-  },
-  {
-    id: 2,
-    name: "Mocha Delight",
-    desc: "Rich chocolate with espresso",
-    price: 5.49,
-    img: "/src/assets/products/margherita-pizza.jpg",
-  },
-  {
-    id: 3,
-    name: "Butter Croissant",
-    desc: "Flaky, buttery and perfectly baked",
-    price: 3.49,
-    img: "/src/assets/products/pepperoni-pizza.jpg",
-  },
-  {
-    id: 4,
-    name: "Chocolate Cake",
-    desc: "Decadent chocolate indulgence",
-    price: 5.99,
-    img: "/src/assets/products/veggie-supreme.jpg",
-  },
-];
+// MenuItem.image_url is optional on the backend, so seeded items arrive
+// without a picture. Fall back to the bundled shots, cycled by position.
+const FALLBACK_IMAGES = [bbqUrl, margheritaUrl, pepperoniUrl, veggieUrl];
+
+const productImage = (item, index) =>
+  item.image_url || FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
 
 const STATS = [
   { icon: <SmallCupIcon />, value: "10+", label: "Years of Experience" },
@@ -145,14 +138,180 @@ const STATS = [
   { icon: <PinIcon />, value: "5", label: "Branches Worldwide" },
 ];
 
+/* ---------------- Menu loading ---------------- */
+
+/** Available menu items from the API, plus the states the UI has to render. */
+function useMenuItems() {
+  const [state, setState] = useState({ items: [], loading: true, error: null });
+
+  useEffect(() => {
+    let active = true;
+
+    fetchMenuItems()
+      .then((items) => active && setState({ items, loading: false, error: null }))
+      .catch((error) => active && setState({ items: [], loading: false, error }));
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return state;
+}
+
+/* ---------------- Cart drawer ---------------- */
+
+// Mounted only while open, so the confirmation and any error reset each time
+// the drawer is reopened.
+function CartDrawer({ onClose }) {
+  const { lines, total, isEmpty, setQuantity, remove, placeOrder } = useCart();
+  const { isAuthenticated } = useAuth();
+  const [note, setNote] = useState("");
+  const [placing, setPlacing] = useState(false);
+  const [error, setError] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);
+
+  const handlePlaceOrder = async () => {
+    setError(null);
+    setPlacing(true);
+
+    try {
+      setConfirmation(await placeOrder(note.trim()));
+      setNote("");
+    } catch (cause) {
+      setError(
+        cause instanceof ApiError
+          ? cause.messages.join(" ")
+          : "Could not place the order. Please try again.",
+      );
+    } finally {
+      setPlacing(false);
+    }
+  };
+
+  return (
+    <div className="cart-overlay" role="dialog" aria-label="Your order">
+      <button
+        type="button"
+        className="cart-scrim"
+        aria-label="Close cart"
+        onClick={onClose}
+      />
+
+      <aside className="cart-drawer">
+        <header className="cart-header">
+          <h3>Your order</h3>
+          <button type="button" className="cart-close" onClick={onClose} aria-label="Close">
+            <CloseIcon />
+          </button>
+        </header>
+
+        {confirmation ? (
+          <div className="cart-body">
+            <p className="cart-success">
+              Order #{confirmation.id} placed — {formatPrice(confirmation.total_price)}
+            </p>
+            <p className="cart-hint">
+              Status: {confirmation.status}. Track it on your{" "}
+              <Link to="/orders">orders page</Link>.
+            </p>
+          </div>
+        ) : isEmpty ? (
+          <div className="cart-body">
+            <p className="cart-hint">Your cart is empty. Add something from the menu.</p>
+          </div>
+        ) : (
+          <>
+            <div className="cart-body">
+              <ul className="cart-lines">
+                {lines.map(({ item, quantity }) => (
+                  <li key={item.id} className="cart-line">
+                    <div className="cart-line-main">
+                      <span className="cart-line-name">{item.name}</span>
+                      <span className="cart-line-price">
+                        {formatPrice(Number(item.price) * quantity)}
+                      </span>
+                    </div>
+
+                    <div className="cart-line-controls">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(item.id, quantity - 1)}
+                        aria-label={`Decrease ${item.name}`}
+                      >
+                        −
+                      </button>
+                      <span className="cart-qty">{quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(item.id, quantity + 1)}
+                        aria-label={`Increase ${item.name}`}
+                      >
+                        +
+                      </button>
+                      <button
+                        type="button"
+                        className="cart-remove"
+                        onClick={() => remove(item.id)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <label className="cart-note">
+                <span>Note for the kitchen</span>
+                <textarea
+                  rows={2}
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Optional"
+                />
+              </label>
+            </div>
+
+            <footer className="cart-footer">
+              {error && <p className="cart-error" role="alert">{error}</p>}
+
+              <div className="cart-total">
+                <span>Total</span>
+                <strong>{formatPrice(total)}</strong>
+              </div>
+
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  className="btn-primary cart-submit"
+                  onClick={handlePlaceOrder}
+                  disabled={placing}
+                >
+                  {placing ? "Placing order…" : "Place order"}
+                </button>
+              ) : (
+                <Link to="/login" className="btn-primary cart-submit">
+                  Log in to order
+                </Link>
+              )}
+            </footer>
+          </>
+        )}
+      </aside>
+    </div>
+  );
+}
+
 /* ---------------- Page ---------------- */
 
 export default function HomePage() {
-  const [cartCount, setCartCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const trackRef = useRef(null);
 
-  const addToCart = () => setCartCount((count) => count + 1);
+  const { items, loading, error } = useMenuItems();
+  const { user, isAuthenticated, logout } = useAuth();
+  const cart = useCart();
 
   const scrollNext = () => {
     const track = trackRef.current;
@@ -163,6 +322,11 @@ export default function HomePage() {
       left: atEnd ? 0 : track.scrollLeft + track.clientWidth * 0.6,
       behavior: "smooth",
     });
+  };
+
+  const addToCart = (item) => {
+    cart.add(item);
+    setCartOpen(true);
   };
 
   return (
@@ -203,18 +367,37 @@ export default function HomePage() {
         </nav>
 
         <div className="nav-actions">
-        <button type="button" className="cart-btn" aria-label="Cart">
+        <button
+            type="button"
+            className="cart-btn"
+            aria-label={`Cart, ${cart.count} item${cart.count === 1 ? "" : "s"}`}
+            onClick={() => setCartOpen(true)}
+        >
             <CartIcon />
-            <span className="cart-badge">{cartCount}</span>
+            <span className="cart-badge">{cart.count}</span>
         </button>
 
         <button type="button" className="btn-outline">
             Book a Table
         </button>
 
-        <Link to="/login" className="btn-outline btn-login">
-            Login
-        </Link>
+        {isAuthenticated ? (
+          <>
+            <Link to="/orders" className="btn-outline">
+                My Orders
+            </Link>
+            <span className="nav-user" title={user?.email || undefined}>
+                {user?.first_name || user?.username}
+            </span>
+            <button type="button" className="btn-outline" onClick={logout}>
+                Log Out
+            </button>
+          </>
+        ) : (
+          <Link to="/login" className="btn-outline btn-login">
+              Login
+          </Link>
+        )}
 
         <button
             type="button"
@@ -249,10 +432,10 @@ export default function HomePage() {
           </p>
 
           <div className="hero-actions">
-            <button type="button" className="btn-primary">
+            <a href="#menu" className="btn-primary">
               Explore Menu
               <ArrowRight />
-            </button>
+            </a>
             <button type="button" className="btn-ghost">
               <CalendarIcon />
               Book a Table
@@ -263,7 +446,7 @@ export default function HomePage() {
         <div className="hero-visual">
           <img
             className="hero-img"
-            src="/src/assets/cup.png"
+            src={cupUrl}
             alt="Cup of coffee with chocolate"
           />
         </div>
@@ -287,28 +470,43 @@ export default function HomePage() {
           </button>
         </div>
 
+        {loading && <p className="picks-status">Loading the menu…</p>}
+
+        {error && (
+          <p className="picks-status is-error" role="alert">
+            {error.messages?.join(" ") ?? "Could not load the menu."}
+          </p>
+        )}
+
+        {!loading && !error && items.length === 0 && (
+          <p className="picks-status">
+            Nothing on the menu yet — seed some items with{" "}
+            <code>manage.py seed_demo</code>.
+          </p>
+        )}
+
         <div className="picks-track" ref={trackRef}>
-          {PRODUCTS.map((product) => (
-            <article key={product.id} className="product-card">
+          {items.map((item, index) => (
+            <article key={item.id} className="product-card">
               <div className="product-media">
                 <img
                   className="product-img"
-                  src={product.img}
-                  alt={product.name}
+                  src={productImage(item, index)}
+                  alt={item.name}
                 />
               </div>
 
               <div className="product-info">
-                <h3 className="product-name">{product.name}</h3>
-                <p className="product-desc">{product.desc}</p>
+                <h3 className="product-name">{item.name}</h3>
+                <p className="product-desc">{item.description}</p>
 
                 <div className="product-footer">
-                  <span className="price">${product.price.toFixed(2)}</span>
+                  <span className="price">{formatPrice(item.price)}</span>
                   <button
                     type="button"
                     className="add-btn"
-                    onClick={addToCart}
-                    aria-label={`Add ${product.name} to cart`}
+                    onClick={() => addToCart(item)}
+                    aria-label={`Add ${item.name} to cart`}
                   >
                     <PlusIcon />
                   </button>
@@ -322,12 +520,6 @@ export default function HomePage() {
       {/* ---------- Reservation Banner ---------- */}
       <section className="reservation-banner">
         <div className="banner-bg">
-          <img
-            className="banner-img"
-            src="/src/assets/restaurant-bg.jpg"
-            alt=""
-            aria-hidden="true"
-          />
           <div className="banner-overlay" />
         </div>
 
@@ -354,6 +546,8 @@ export default function HomePage() {
           </div>
         ))}
       </section>
+
+      {cartOpen && <CartDrawer onClose={() => setCartOpen(false)} />}
     </div>
   );
 }

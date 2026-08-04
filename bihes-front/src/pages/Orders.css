@@ -1,0 +1,221 @@
+/* ============================================================
+   Orders — customer history and the admin status console.
+   ============================================================ */
+
+.orders-page {
+  min-height: 100vh;
+  padding: 40px 32px 80px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.orders-page a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+/* ---------- Header ---------- */
+
+.orders-header {
+  max-width: 860px;
+  margin: 0 auto 28px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.orders-header h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.orders-subtitle {
+  margin-top: 6px;
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+
+.orders-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.orders-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--primary);
+  background: rgba(200, 164, 93, 0.06);
+  border: 1px solid rgba(200, 164, 93, 0.28);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.orders-btn:hover {
+  background: var(--primary);
+  color: #1b1108;
+}
+
+.orders-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- States ---------- */
+
+.orders-alert,
+.orders-empty {
+  max-width: 860px;
+  margin: 0 auto 20px;
+  color: var(--text-2);
+  font-size: 0.95rem;
+}
+
+.orders-alert {
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #e08a7d;
+  background: rgba(224, 138, 125, 0.08);
+  border: 1px solid rgba(224, 138, 125, 0.3);
+}
+
+/* ---------- Order cards ---------- */
+
+.orders-list {
+  max-width: 860px;
+  margin: 0 auto;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.order-card {
+  padding: 22px 24px;
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid rgba(247, 239, 227, 0.08);
+}
+
+.order-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.order-id {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.order-meta {
+  margin-top: 4px;
+  color: var(--text-2);
+  font-size: 0.82rem;
+}
+
+.order-top-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.order-total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.order-status {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+}
+
+/* One tint per Order.Status value on the backend. */
+.order-status.is-pending { color: #d9a441; }
+.order-status.is-preparing { color: #6fa8dc; }
+.order-status.is-ready { color: #74c69d; }
+.order-status.is-completed { color: #9d9d9d; }
+.order-status.is-cancelled { color: #e08a7d; }
+
+.order-items {
+  margin-top: 16px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.92rem;
+  color: var(--text-2);
+}
+
+.order-items li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.order-note {
+  margin-top: 14px;
+  padding-left: 12px;
+  border-left: 2px solid rgba(200, 164, 93, 0.4);
+  color: var(--text-2);
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
+/* ---------- Admin status control ---------- */
+
+.order-status-control {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-2);
+}
+
+.order-status-control select {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font: inherit;
+  cursor: pointer;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid rgba(247, 239, 227, 0.16);
+}
+
+.order-status-control select:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Shown by RequireAuth while the stored session is being restored. */
+.route-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: #b8a692;
+  background: #0f0b08;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+@media (max-width: 640px) {
+  .orders-page {
+    padding: 28px 18px 60px;
+  }
+}

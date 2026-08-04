@@ -1,16 +1,72 @@
-# React + Vite
+# bihes-front
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite storefront for the [Bihes API](../../bihes-back) — a Django REST
+Framework backend with JWT auth, a menu, and orders.
 
-Currently, two official plugins are available:
+## Running locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Two processes. Start the backend first:
 
-## React Compiler
+```bash
+cd ../../bihes-back
+./.venv/bin/python manage.py migrate
+./.venv/bin/python manage.py seed_demo     # demo accounts + a small menu
+./.venv/bin/python manage.py runserver     # http://127.0.0.1:8000
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Then the frontend:
 
-## Expanding the ESLint configuration
+```bash
+npm install
+npm run dev                                # http://localhost:5173
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Sign in with either seeded account — password `demo12345`:
+
+| Account    | Role     | Sees                                  |
+| ---------- | -------- | ------------------------------------- |
+| `customer` | customer | own orders                            |
+| `admin`    | admin    | every order, and can change statuses  |
+
+Login accepts a username or the account's email address.
+
+## How the two connect
+
+The dev server proxies `/api/*` to `http://127.0.0.1:8000` (see
+[vite.config.js](vite.config.js)), so every request is same-origin and the
+backend needs no CORS configuration. Override the target with
+`VITE_API_PROXY_TARGET`, or point the app at an absolute API host for a
+deployed build with `VITE_API_BASE_URL` — see [.env.example](.env.example).
+
+## Layout
+
+```
+src/
+  api/         one module per backend app, over a shared fetch client
+    client.js  base URL, JWT storage, refresh-on-401, error envelope → ApiError
+    auth.js    /accounts/auth/  — register, login, me
+    menu.js    /menu/           — categories, menu items
+    orders.js  /orders/orders/  — list, create, admin status change
+  auth/        AuthProvider + useAuth: who is signed in
+  cart/        CartProvider + useCart: the in-progress order
+  routes/      RequireAuth gate
+  pages/       Home, Login, Register, Orders
+```
+
+Two conventions worth knowing:
+
+- **Errors.** Every failed call throws an `ApiError` carrying the backend's
+  envelope (`field_errors` / `general_errors`), so forms can show a message
+  against the right input via `error.fieldError("username")`.
+- **Tokens.** Held in `localStorage` when "Remember me" is ticked and
+  `sessionStorage` otherwise. An expired access token is refreshed once,
+  transparently; if the refresh fails the session is cleared.
+
+## Scripts
+
+```bash
+npm run dev       # dev server with HMR
+npm run build     # production build to dist/
+npm run preview   # serve the build
+npm run lint      # eslint
+```
