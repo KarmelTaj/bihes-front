@@ -439,10 +439,14 @@ export default function HomePage() {
           </p>
 
           <div className="hero-actions">
-            <a href="#menu" className="btn-primary">
+            <Link to="/menu">
               Explore Menu
               <ArrowRight />
-            </a>
+            </Link>
+            {/* <a href="#menu" className="btn-primary">
+              Explore Menu
+              
+            </a> */}
             <button type="button" className="btn-ghost">
               <CalendarIcon />
               Book a Table

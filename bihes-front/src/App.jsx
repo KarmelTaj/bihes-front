@@ -6,6 +6,7 @@ import HomePage from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Orders from "./pages/Orders";
+import Menu from "./pages/MenuPage"
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/menu" element={<Menu />} />
             <Route
               path="/orders"
               element={
