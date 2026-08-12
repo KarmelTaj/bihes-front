@@ -394,9 +394,16 @@ export default function HomePage() {
             </button>
           </>
         ) : (
+          <>
           <Link to="/login" className="btn-outline btn-login">
               Login
           </Link>
+          
+          <Link to="/Register" className="btn-outline btn-Register">
+              Register
+          </Link>
+          </>
+          
         )}
 
         <button
