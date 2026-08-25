@@ -163,10 +163,32 @@
   color: var(--text-2);
 }
 
+
 .order-items li {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
   gap: 12px;
+
+  padding: 8px 0;
+}
+
+.order-items img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+
+  border-radius: 12px;
+  border: 1px solid rgba(247, 239, 227, 0.08);
+}
+
+.order-items picture {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+
+  border-radius: 12px;
+  border: 1px solid rgba(247, 239, 227, 0.08);
 }
 
 .order-note {
@@ -218,4 +240,33 @@
   .orders-page {
     padding: 28px 18px 60px;
   }
+}
+
+.order-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-item-info strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.order-item-info span {
+  color: var(--text-2);
+  font-size: 0.85rem;
+}
+
+.order-item-price {
+  color: var(--primary);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.image-skeleton {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: #2a211b;
 }

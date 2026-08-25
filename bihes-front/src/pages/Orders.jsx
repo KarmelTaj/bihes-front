@@ -6,8 +6,24 @@ import { fetchOrders, setOrderStatus, ORDER_STATUS_LABELS } from "../api/orders"
 import { useAuth } from "../auth/useAuth";
 import { formatDateTime, formatPrice } from "../lib/format";
 import "./Orders.css";
+import FALLBACK_IMAGE from "../assets/Logo.png";
+//const FALLBACK_IMAGE = "../assets/Logo.png";
 
 const STATUS_VALUES = Object.keys(ORDER_STATUS_LABELS);
+
+function ProductImage({ src, alt, ...props }) {
+  return (
+    <img
+      src={src || FALLBACK_IMAGE}
+      alt={alt}
+      onError={(e) => {
+        e.currentTarget.onerror = null;
+        e.currentTarget.src = FALLBACK_IMAGE;
+      }}
+      {...props}
+    />
+  );
+}
 
 export default function OrdersPage() {
   const { user, isAdmin } = useAuth();
@@ -127,10 +143,24 @@ export default function OrdersPage() {
             <ul className="order-items">
               {order.items.map((line) => (
                 <li key={line.id}>
-                  <span>
-                    {line.quantity} × {line.menu_item_name}
+                  <ProductImage src={line.menu_item_image_url} alt={line.menu_item_name} />
+
+                  {/* <picture>
+
+                    <source srcset="line.menu_item_image_url"/>
+
+                    <source srcset={FALLBACK_IMAGE} />
+
+                  </picture> */}
+
+                  <div className="order-item-info">
+                    <strong>{line.menu_item_name}</strong>
+                    <span>{line.quantity} × item</span>
+                  </div>
+
+                  <span className="order-item-price">
+                    {formatPrice(line.subtotal)}
                   </span>
-                  <span>{formatPrice(line.subtotal)}</span>
                 </li>
               ))}
             </ul>
@@ -159,3 +189,5 @@ export default function OrdersPage() {
     </div>
   );
 }
+
+
