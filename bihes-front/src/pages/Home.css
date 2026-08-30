@@ -1039,3 +1039,33 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+.cart-line-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cart-line-image {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.cart-line-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cart-line-name {
+  font-weight: 600;
+}
+
+.cart-line-price {
+  color: var(--primary);
+  font-size: 0.9rem;
+}

@@ -12,7 +12,7 @@ import margheritaUrl from "../assets/products/margherita-pizza.jpg";
 import pepperoniUrl from "../assets/products/pepperoni-pizza.jpg";
 import veggieUrl from "../assets/products/veggie-supreme.jpg";
 import "./Home.css";
-
+import FALLBACK_IMAGE from "../assets/Logo.png";
 /* ---------------- Icons ---------------- */
 
 const CupLogo = () => (
@@ -159,6 +159,21 @@ function useMenuItems() {
   return state;
 }
 
+
+function ProductImage({ src, alt, ...props }) {
+  return (
+    <img
+      src={src || FALLBACK_IMAGE}
+      alt={alt}
+      onError={(e) => {
+        e.currentTarget.onerror = null;
+        e.currentTarget.src = FALLBACK_IMAGE;
+      }}
+      {...props}
+    />
+  );
+}
+
 /* ---------------- Cart drawer ---------------- */
 
 // Mounted only while open, so the confirmation and any error reset each time
@@ -227,10 +242,18 @@ function CartDrawer({ onClose }) {
                 {lines.map(({ item, quantity }) => (
                   <li key={item.id} className="cart-line">
                     <div className="cart-line-main">
-                      <span className="cart-line-name">{item.name}</span>
-                      <span className="cart-line-price">
-                        {formatPrice(Number(item.price) * quantity)}
-                      </span>
+                      <ProductImage
+                        className="cart-line-image"
+                        src={item.image_url}
+                        alt={item.name}
+                      />
+
+                      <div className="cart-line-info">
+                        <span className="cart-line-name">{item.name}</span>
+                        <span className="cart-line-price">
+                          {formatPrice(Number(item.price) * quantity)}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="cart-line-controls">
