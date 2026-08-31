@@ -12,25 +12,10 @@ import margheritaUrl from "../assets/products/margherita-pizza.jpg";
 import pepperoniUrl from "../assets/products/pepperoni-pizza.jpg";
 import veggieUrl from "../assets/products/veggie-supreme.jpg";
 import "./Home.css";
-import FALLBACK_IMAGE from "../assets/Logo.png";
+import Navbar from "../components/Navbar";
+import CartDrawer from "../components/CartDrawer";
+
 /* ---------------- Icons ---------------- */
-
-const CupLogo = () => (
-  <svg viewBox="0 0 48 40" width="34" height="30" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M8 14h26v10a10 10 0 0 1-10 10h-6A10 10 0 0 1 8 24V14Z" />
-    <path d="M34 17h3a5 5 0 0 1 0 10h-3" />
-    <path d="M6 38h30" />
-    <path d="M16 9c0-2 2-2 2-4M23 9c0-2 2-2 2-4M30 9c0-2 2-2 2-4" />
-  </svg>
-);
-
-const ChevronDown = () => (
-  <svg viewBox="0 0 24 24" width="13" height="13" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m6 9 6 6 6-6" />
-  </svg>
-);
 
 const ChevronRight = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
@@ -47,14 +32,14 @@ const ArrowRight = () => (
   </svg>
 );
 
-const CartIcon = () => (
-  <svg viewBox="0 0 24 24" width="21" height="21" fill="none"
-    stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="9" cy="20" r="1.4" />
-    <circle cx="18" cy="20" r="1.4" />
-    <path d="M2 3h2.5l2.4 12.2a2 2 0 0 0 2 1.6h8.3a2 2 0 0 0 2-1.6L21 7H6" />
-  </svg>
-);
+// const CartIcon = () => (
+//   <svg viewBox="0 0 24 24" width="21" height="21" fill="none"
+//     stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+//     <circle cx="9" cy="20" r="1.4" />
+//     <circle cx="18" cy="20" r="1.4" />
+//     <path d="M2 3h2.5l2.4 12.2a2 2 0 0 0 2 1.6h8.3a2 2 0 0 0 2-1.6L21 7H6" />
+//   </svg>
+// );
 
 const CalendarIcon = () => (
   <svg viewBox="0 0 24 24" width="17" height="17" fill="none"
@@ -71,12 +56,12 @@ const PlusIcon = () => (
   </svg>
 );
 
-const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <path d="m6 6 12 12M18 6 6 18" />
-  </svg>
-);
+// const CloseIcon = () => (
+//   <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+//     stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+//     <path d="m6 6 12 12M18 6 6 18" />
+//   </svg>
+// );
 
 const BeanIcon = () => (
   <svg viewBox="0 0 24 24" width="26" height="26" fill="none"
@@ -116,13 +101,13 @@ const SmallCupIcon = () => (
 
 /* ---------------- Data ---------------- */
 
-const NAV_LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "Menu", href: "#menu" },
-  { label: "About", href: "#about" },
-  { label: "Pages", href: "#pages", dropdown: true },
-  { label: "Contact", href: "#contact" },
-];
+// const NAV_LINKS = [
+//   { label: "Home", href: "#home" },
+//   { label: "Menu", href: "#menu" },
+//   { label: "About", href: "#about" },
+//   { label: "Pages", href: "#pages", dropdown: true },
+//   { label: "Contact", href: "#contact" },
+// ];
 
 // MenuItem.image_url is optional on the backend, so seeded items arrive
 // without a picture. Fall back to the bundled shots, cycled by position.
@@ -160,175 +145,175 @@ function useMenuItems() {
 }
 
 
-function ProductImage({ src, alt, ...props }) {
-  return (
-    <img
-      src={src || FALLBACK_IMAGE}
-      alt={alt}
-      onError={(e) => {
-        e.currentTarget.onerror = null;
-        e.currentTarget.src = FALLBACK_IMAGE;
-      }}
-      {...props}
-    />
-  );
-}
+// function ProductImage({ src, alt, ...props }) {
+//   return (
+//     <img
+//       src={src || FALLBACK_IMAGE}
+//       alt={alt}
+//       onError={(e) => {
+//         e.currentTarget.onerror = null;
+//         e.currentTarget.src = FALLBACK_IMAGE;
+//       }}
+//       {...props}
+//     />
+//   );
+// }
 
 /* ---------------- Cart drawer ---------------- */
 
 // Mounted only while open, so the confirmation and any error reset each time
 // the drawer is reopened.
-function CartDrawer({ onClose }) {
-  const { lines, total, isEmpty, setQuantity, remove, placeOrder } = useCart();
-  const { isAuthenticated } = useAuth();
-  const [note, setNote] = useState("");
-  const [placing, setPlacing] = useState(false);
-  const [error, setError] = useState(null);
-  const [confirmation, setConfirmation] = useState(null);
+// function CartDrawer({ onClose }) {
+//   const { lines, total, isEmpty, setQuantity, remove, placeOrder } = useCart();
+//   const { isAuthenticated } = useAuth();
+//   const [note, setNote] = useState("");
+//   const [placing, setPlacing] = useState(false);
+//   const [error, setError] = useState(null);
+//   const [confirmation, setConfirmation] = useState(null);
 
-  const handlePlaceOrder = async () => {
-    setError(null);
-    setPlacing(true);
+//   const handlePlaceOrder = async () => {
+//     setError(null);
+//     setPlacing(true);
 
-    try {
-      setConfirmation(await placeOrder(note.trim()));
-      setNote("");
-    } catch (cause) {
-      setError(
-        cause instanceof ApiError
-          ? cause.messages.join(" ")
-          : "Could not place the order. Please try again.",
-      );
-    } finally {
-      setPlacing(false);
-    }
-  };
+//     try {
+//       setConfirmation(await placeOrder(note.trim()));
+//       setNote("");
+//     } catch (cause) {
+//       setError(
+//         cause instanceof ApiError
+//           ? cause.messages.join(" ")
+//           : "Could not place the order. Please try again.",
+//       );
+//     } finally {
+//       setPlacing(false);
+//     }
+//   };
 
-  return (
-    <div className="cart-overlay" role="dialog" aria-label="Your order">
-      <button
-        type="button"
-        className="cart-scrim"
-        aria-label="Close cart"
-        onClick={onClose}
-      />
+//   return (
+//     <div className="cart-overlay" role="dialog" aria-label="Your order">
+//       <button
+//         type="button"
+//         className="cart-scrim"
+//         aria-label="Close cart"
+//         onClick={onClose}
+//       />
 
-      <aside className="cart-drawer">
-        <header className="cart-header">
-          <h3>Your order</h3>
-          <button type="button" className="cart-close" onClick={onClose} aria-label="Close">
-            <CloseIcon />
-          </button>
-        </header>
+//       <aside className="cart-drawer">
+//         <header className="cart-header">
+//           <h3>Your order</h3>
+//           <button type="button" className="cart-close" onClick={onClose} aria-label="Close">
+//             <CloseIcon />
+//           </button>
+//         </header>
 
-        {confirmation ? (
-          <div className="cart-body">
-            <p className="cart-success">
-              Order #{confirmation.id} placed — {formatPrice(confirmation.total_price)}
-            </p>
-            <p className="cart-hint">
-              Status: {confirmation.status}. Track it on your{" "}
-              <Link to="/orders">orders page</Link>.
-            </p>
-          </div>
-        ) : isEmpty ? (
-          <div className="cart-body">
-            <p className="cart-hint">Your cart is empty. Add something from the menu.</p>
-          </div>
-        ) : (
-          <>
-            <div className="cart-body">
-              <ul className="cart-lines">
-                {lines.map(({ item, quantity }) => (
-                  <li key={item.id} className="cart-line">
-                    <div className="cart-line-main">
-                      <ProductImage
-                        className="cart-line-image"
-                        src={item.image_url}
-                        alt={item.name}
-                      />
+//         {confirmation ? (
+//           <div className="cart-body">
+//             <p className="cart-success">
+//               Order #{confirmation.id} placed — {formatPrice(confirmation.total_price)}
+//             </p>
+//             <p className="cart-hint">
+//               Status: {confirmation.status}. Track it on your{" "}
+//               <Link to="/orders">orders page</Link>.
+//             </p>
+//           </div>
+//         ) : isEmpty ? (
+//           <div className="cart-body">
+//             <p className="cart-hint">Your cart is empty. Add something from the menu.</p>
+//           </div>
+//         ) : (
+//           <>
+//             <div className="cart-body">
+//               <ul className="cart-lines">
+//                 {lines.map(({ item, quantity }) => (
+//                   <li key={item.id} className="cart-line">
+//                     <div className="cart-line-main">
+//                       <ProductImage
+//                         className="cart-line-image"
+//                         src={item.image_url}
+//                         alt={item.name}
+//                       />
 
-                      <div className="cart-line-info">
-                        <span className="cart-line-name">{item.name}</span>
-                        <span className="cart-line-price">
-                          {formatPrice(Number(item.price) * quantity)}
-                        </span>
-                      </div>
-                    </div>
+//                       <div className="cart-line-info">
+//                         <span className="cart-line-name">{item.name}</span>
+//                         <span className="cart-line-price">
+//                           {formatPrice(Number(item.price) * quantity)}
+//                         </span>
+//                       </div>
+//                     </div>
 
-                    <div className="cart-line-controls">
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(item.id, quantity - 1)}
-                        aria-label={`Decrease ${item.name}`}
-                      >
-                        −
-                      </button>
-                      <span className="cart-qty">{quantity}</span>
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(item.id, quantity + 1)}
-                        aria-label={`Increase ${item.name}`}
-                      >
-                        +
-                      </button>
-                      <button
-                        type="button"
-                        className="cart-remove"
-                        onClick={() => remove(item.id)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+//                     <div className="cart-line-controls">
+//                       <button
+//                         type="button"
+//                         onClick={() => setQuantity(item.id, quantity - 1)}
+//                         aria-label={`Decrease ${item.name}`}
+//                       >
+//                         −
+//                       </button>
+//                       <span className="cart-qty">{quantity}</span>
+//                       <button
+//                         type="button"
+//                         onClick={() => setQuantity(item.id, quantity + 1)}
+//                         aria-label={`Increase ${item.name}`}
+//                       >
+//                         +
+//                       </button>
+//                       <button
+//                         type="button"
+//                         className="cart-remove"
+//                         onClick={() => remove(item.id)}
+//                       >
+//                         Remove
+//                       </button>
+//                     </div>
+//                   </li>
+//                 ))}
+//               </ul>
 
-              <label className="cart-note">
-                <span>Note for the kitchen</span>
-                <textarea
-                  rows={2}
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="Optional"
-                />
-              </label>
-            </div>
+//               <label className="cart-note">
+//                 <span>Note for the kitchen</span>
+//                 <textarea
+//                   rows={2}
+//                   value={note}
+//                   onChange={(e) => setNote(e.target.value)}
+//                   placeholder="Optional"
+//                 />
+//               </label>
+//             </div>
 
-            <footer className="cart-footer">
-              {error && <p className="cart-error" role="alert">{error}</p>}
+//             <footer className="cart-footer">
+//               {error && <p className="cart-error" role="alert">{error}</p>}
 
-              <div className="cart-total">
-                <span>Total</span>
-                <strong>{formatPrice(total)}</strong>
-              </div>
+//               <div className="cart-total">
+//                 <span>Total</span>
+//                 <strong>{formatPrice(total)}</strong>
+//               </div>
 
-              {isAuthenticated ? (
-                <button
-                  type="button"
-                  className="btn-primary cart-submit"
-                  onClick={handlePlaceOrder}
-                  disabled={placing}
-                >
-                  {placing ? "Placing order…" : "Place order"}
-                </button>
-              ) : (
-                <Link to="/login" className="btn-primary cart-submit">
-                  Log in to order
-                </Link>
-              )}
-            </footer>
-          </>
-        )}
-      </aside>
-    </div>
-  );
-}
+//               {isAuthenticated ? (
+//                 <button
+//                   type="button"
+//                   className="btn-primary cart-submit"
+//                   onClick={handlePlaceOrder}
+//                   disabled={placing}
+//                 >
+//                   {placing ? "Placing order…" : "Place order"}
+//                 </button>
+//               ) : (
+//                 <Link to="/login" className="btn-primary cart-submit">
+//                   Log in to order
+//                 </Link>
+//               )}
+//             </footer>
+//           </>
+//         )}
+//       </aside>
+//     </div>
+//   );
+// }
 
 /* ---------------- Page ---------------- */
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  //const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const trackRef = useRef(null);
 
@@ -367,7 +352,8 @@ export default function HomePage() {
       }}
     >
       {/* ---------- Navbar ---------- */}
-      <header className="navbar">
+      <Navbar />
+      {/* <header className="navbar">
         <a href="#home" className="brand">
           <span className="brand-icon">
             <CupLogo />
@@ -441,7 +427,7 @@ export default function HomePage() {
             <span />
         </button>
         </div>
-      </header>
+      </header> */}
 
       {/* ---------- Hero ---------- */}
       <section className="hero" id="home">
@@ -462,7 +448,7 @@ export default function HomePage() {
           </p>
 
           <div className="hero-actions">
-            <Link to="/menu">
+            <Link to="/menu" className="btn-ghost">
               Explore Menu
               <ArrowRight />
             </Link>
