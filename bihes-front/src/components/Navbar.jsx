@@ -76,7 +76,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const cart = useCart();
   const location = useLocation();
 
@@ -177,6 +177,15 @@ export default function Navbar() {
                 My Orders
               </Link>
 
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="btn-outline"
+                >
+                  Admin Panel
+                </Link>
+              )}
+
               <span
                 className="nav-user"
                 title={user?.email || undefined}
@@ -239,3 +248,4 @@ export default function Navbar() {
     </>
   );
 }
+  

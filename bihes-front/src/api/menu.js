@@ -40,3 +40,16 @@ export function updateMenuItem(id, fields) {
 export function deleteMenuItem(id) {
   return apiFetch(`/menu/menu-items/${id}/`, { method: "DELETE" });
 }
+
+
+export function createCategory(fields) {
+  return apiFetch("/menu/categories/", { method: "POST", body: fields });
+}
+
+export function updateCategory(id, fields) {
+  return apiFetch(`/menu/categories/${id}/`, { method: "PATCH", body: fields });
+}
+
+export function deleteCategory(id) {
+  return apiFetch(`/menu/categories/${id}/`, { method: "DELETE" });
+}

@@ -83,7 +83,7 @@ export function AuthProvider({ children }) {
       status,
       isAuthenticated: status === "authenticated",
       isLoading: status === "loading",
-      isAdmin: user?.role === "admin",
+      isAdmin: user?.is_admin === true || user?.role === "admin",
       login,
       register,
       logout,
