@@ -14,7 +14,7 @@ import veggieUrl from "../assets/products/veggie-supreme.jpg";
 import "./Home.css";
 import Navbar from "../components/Navbar";
 import CartDrawer from "../components/CartDrawer";
-
+import ProductImage from "../components/ProductImage";
 /* ---------------- Icons ---------------- */
 
 const ChevronRight = () => (
@@ -509,11 +509,16 @@ export default function HomePage() {
           {items.map((item, index) => (
             <article key={item.id} className="product-card">
               <div className="product-media">
-                <img
+                <ProductImage
                   className="product-img"
-                  src={productImage(item, index)}
+                  src={item.image_url}
                   alt={item.name}
-                />
+                />  
+                {/* <img
+                  className="product-img"
+                  src={ProductImage(item, index)}
+                  alt={item.name}
+                /> */}
               </div>
 
               <div className="product-info">

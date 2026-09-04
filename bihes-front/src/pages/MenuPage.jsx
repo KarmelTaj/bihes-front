@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { colors } from "../theme/colors";
-import { fetchMenuItems } from "../api/menu";
+import { fetchMenuItems, recommendMenu } from "../api/menu";
 import { ApiError } from "../api/client";
 import { useCart } from "../cart/useCart";
-import { useAuth } from "../auth/useAuth";
+//import { useAuth } from "../auth/useAuth";
 import { formatPrice } from "../lib/format";
 
 import bbqUrl from "../assets/products/bbq-chicken-pizza.jpg";
@@ -66,6 +66,22 @@ const PlusIcon = () => (
     strokeLinecap="round"
   >
     <path d="M12 5v14M5 12h14" />
+  </svg>
+);
+
+const SparkIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="m12 3 1.1 3.4a6.2 6.2 0 0 0 4 4L20.5 12l-3.4 1.1a6.2 6.2 0 0 0-4 4L12 20.5l-1.1-3.4a6.2 6.2 0 0 0-4-4L3.5 12l3.4-1.1a6.2 6.2 0 0 0 4-4L12 3Z" />
   </svg>
 );
 
@@ -138,8 +154,15 @@ export default function MenuPage() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
 
+  const [aiQuestion, setAiQuestion] = useState("");
+  const [aiTokens, setAiTokens] = useState([]);
+  const [aiItems, setAiItems] = useState([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
+  const [aiHasRun, setAiHasRun] = useState(false);
+
   const cart = useCart();
-  const { user, isAuthenticated, logout } = useAuth();
+  // const { user, isAuthenticated, logout } = useAuth();
 
   /* ----------------------------------------------------------
      Load menu
@@ -254,6 +277,83 @@ export default function MenuPage() {
 
   const addToCart = (item) => {
     cart.add(item);
+  };
+
+  const applyRecommendationResponse = (data) => {
+    setAiTokens(Array.isArray(data?.tokens) ? data.tokens : []);
+    setAiItems(Array.isArray(data?.items) ? data.items : []);
+    setAiHasRun(true);
+  };
+
+  const askForRecommendation = async (event) => {
+    event.preventDefault();
+    const question = aiQuestion.trim();
+    if (!question || aiLoading) return;
+
+    setAiLoading(true);
+    setAiError("");
+
+    try {
+      const data = await recommendMenu({ question });
+      applyRecommendationResponse(data);
+    } catch (err) {
+      setAiError(
+        err instanceof ApiError
+          ? err.messages?.join(" ") || err.message
+          : "I couldn't match that request right now."
+      );
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const rerankWithTokens = async (nextTokens) => {
+    setAiTokens(nextTokens);
+    setAiError("");
+    setAiHasRun(true);
+
+    if (nextTokens.length === 0) {
+      setAiItems([]);
+      return;
+    }
+
+    setAiLoading(true);
+    try {
+      const data = await recommendMenu({ tokens: nextTokens });
+      applyRecommendationResponse(data);
+    } catch (err) {
+      setAiError(
+        err instanceof ApiError
+          ? err.messages?.join(" ") || err.message
+          : "I couldn't update the recommendations."
+      );
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const toggleAiToken = (index) => {
+    const nextTokens = aiTokens.map((token, tokenIndex) =>
+      tokenIndex === index
+        ? {
+            ...token,
+            state: token.state === "excluded" ? "wanted" : "excluded",
+          }
+        : token
+    );
+    rerankWithTokens(nextTokens);
+  };
+
+  const removeAiToken = (index) => {
+    rerankWithTokens(aiTokens.filter((_, tokenIndex) => tokenIndex !== index));
+  };
+
+  const clearAiFinder = () => {
+    setAiQuestion("");
+    setAiTokens([]);
+    setAiItems([]);
+    setAiError("");
+    setAiHasRun(false);
   };
 
   return (
@@ -397,6 +497,157 @@ export default function MenuPage() {
           Explore our carefully crafted selection of premium
           coffee, delicious food, and sweet moments.
         </p>
+      </section>
+
+      {/* ======================================================
+          AI menu finder
+      ====================================================== */}
+
+      <section className="menu-ai-section" aria-labelledby="menu-ai-title">
+        <div className="menu-ai-card">
+          <div className="menu-ai-heading">
+            <span className="menu-ai-icon"><SparkIcon /></span>
+            <div>
+              <p className="menu-ai-kicker">AI MENU FINDER</p>
+              <h2 id="menu-ai-title">Tell us what you're craving.</h2>
+              <p>
+                Describe what you want in your own words. Green chips are things
+                you want; red chips are things you want to avoid.
+              </p>
+            </div>
+          </div>
+
+          <form className="menu-ai-form" onSubmit={askForRecommendation}>
+            <label className="menu-ai-input-wrap">
+              <span className="sr-only">Describe what you want to eat or drink</span>
+              <input
+                type="text"
+                maxLength={500}
+                placeholder='Try: "Something chocolate with coffee, but no almond"'
+                value={aiQuestion}
+                onChange={(event) => setAiQuestion(event.target.value)}
+              />
+            </label>
+            <button
+              type="submit"
+              className="menu-ai-submit"
+              disabled={aiLoading || !aiQuestion.trim()}
+            >
+              <SparkIcon />
+              {aiLoading ? "Finding…" : "Find for me"}
+            </button>
+          </form>
+
+          {aiError && <p className="menu-ai-error">{aiError}</p>}
+
+          {aiHasRun && (
+            <div className="menu-ai-understanding">
+              <div className="menu-ai-understanding-title">
+                <div>
+                  <strong>What we understood</strong>
+                  <span>Click a chip to switch want / avoid. Use × to remove it.</span>
+                </div>
+                <button type="button" className="menu-ai-clear" onClick={clearAiFinder}>
+                  Clear
+                </button>
+              </div>
+
+              {aiTokens.length > 0 ? (
+                <div className="menu-ai-tokens" aria-label="Detected preferences">
+                  {aiTokens.map((token, index) => (
+                    <div
+                      key={`${token.kind || "token"}-${token.value}-${index}`}
+                      className={`menu-ai-token ${
+                        token.state === "excluded" ? "is-excluded" : "is-wanted"
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        className="menu-ai-token-toggle"
+                        onClick={() => toggleAiToken(index)}
+                        aria-label={`${token.label || token.value}: ${
+                          token.state === "excluded" ? "avoid" : "wanted"
+                        }. Click to toggle.`}
+                      >
+                        <span className="menu-ai-token-status">
+                          {token.state === "excluded" ? "−" : "✓"}
+                        </span>
+                        <span>{token.label || token.value}</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="menu-ai-token-remove"
+                        onClick={() => removeAiToken(index)}
+                        aria-label={`Remove ${token.label || token.value}`}
+                        title="Remove token"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="menu-ai-empty-copy">
+                  No editable preferences are selected. Ask another question to start again.
+                </p>
+              )}
+            </div>
+          )}
+
+          {aiHasRun && aiTokens.length > 0 && (
+            <div className="menu-ai-recommendations">
+              <div className="menu-ai-results-heading">
+                <div>
+                  <p className="menu-ai-kicker">BEST MATCHES</p>
+                  <h3>Recommended for you</h3>
+                </div>
+                {aiLoading && <span className="menu-ai-updating">Updating…</span>}
+              </div>
+
+              {!aiLoading && aiItems.length === 0 ? (
+                <p className="menu-ai-no-match">
+                  No current menu item matches those preferences. Try removing or
+                  changing one of the chips.
+                </p>
+              ) : (
+                <div className="menu-ai-results">
+                  {aiItems.map((item, index) => (
+                    <article key={item.id} className="menu-ai-result-card">
+                      <img
+                        src={productImage(item, index)}
+                        alt={item.name}
+                        onError={(event) => {
+                          event.currentTarget.onerror = null;
+                          event.currentTarget.src = FALLBACK_IMAGE;
+                        }}
+                      />
+                      <div className="menu-ai-result-body">
+                        <div className="menu-ai-result-meta">
+                          <span>{item.category_name || "Menu"}</span>
+                          <span>{formatPrice(item.price)}</span>
+                        </div>
+                        <h4>{item.name}</h4>
+                        <p>{item.description || "A Maison Café favorite."}</p>
+                        {item.matched_tokens?.length > 0 && (
+                          <div className="menu-ai-match-line">
+                            Matches {item.matched_tokens.map((token) => token.replaceAll("_", " ")).join(", ")}
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          className="menu-ai-add"
+                          onClick={() => addToCart(item)}
+                        >
+                          <PlusIcon /> Add to cart
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </section>
 
       {/* ======================================================

@@ -53,3 +53,17 @@ export function updateCategory(id, fields) {
 export function deleteCategory(id) {
   return apiFetch(`/menu/categories/${id}/`, { method: "DELETE" });
 }
+
+
+/**
+ * Natural-language menu recommendation.
+ * Send { question } for the first pass, then { tokens } when the customer
+ * toggles/removes chips so the transformer does not need to run again.
+ */
+export function recommendMenu(payload) {
+  return apiFetch("/menu/recommend/", {
+    method: "POST",
+    body: payload,
+    auth: false,
+  });
+}
