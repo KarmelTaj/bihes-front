@@ -2,15 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { colors } from "../theme/colors";
 import { fetchMenuItems } from "../api/menu";
-import { ApiError } from "../api/client";
-import { useAuth } from "../auth/useAuth";
 import { useCart } from "../cart/useCart";
 import { formatPrice } from "../lib/format";
 import cupUrl from "../assets/cup.png";
-import bbqUrl from "../assets/products/bbq-chicken-pizza.jpg";
-import margheritaUrl from "../assets/products/margherita-pizza.jpg";
-import pepperoniUrl from "../assets/products/pepperoni-pizza.jpg";
-import veggieUrl from "../assets/products/veggie-supreme.jpg";
 import "./Home.css";
 import Navbar from "../components/Navbar";
 import CartDrawer from "../components/CartDrawer";
@@ -109,12 +103,6 @@ const SmallCupIcon = () => (
 //   { label: "Contact", href: "#contact" },
 // ];
 
-// MenuItem.image_url is optional on the backend, so seeded items arrive
-// without a picture. Fall back to the bundled shots, cycled by position.
-const FALLBACK_IMAGES = [bbqUrl, margheritaUrl, pepperoniUrl, veggieUrl];
-
-const productImage = (item, index) =>
-  item.image_url || FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
 
 const STATS = [
   { icon: <SmallCupIcon />, value: "10+", label: "Years of Experience" },
@@ -125,7 +113,6 @@ const STATS = [
 
 /* ---------------- Menu loading ---------------- */
 
-/** Available menu items from the API, plus the states the UI has to render. */
 function useMenuItems() {
   const [state, setState] = useState({ items: [], loading: true, error: null });
 
@@ -145,171 +132,6 @@ function useMenuItems() {
 }
 
 
-// function ProductImage({ src, alt, ...props }) {
-//   return (
-//     <img
-//       src={src || FALLBACK_IMAGE}
-//       alt={alt}
-//       onError={(e) => {
-//         e.currentTarget.onerror = null;
-//         e.currentTarget.src = FALLBACK_IMAGE;
-//       }}
-//       {...props}
-//     />
-//   );
-// }
-
-/* ---------------- Cart drawer ---------------- */
-
-// Mounted only while open, so the confirmation and any error reset each time
-// the drawer is reopened.
-// function CartDrawer({ onClose }) {
-//   const { lines, total, isEmpty, setQuantity, remove, placeOrder } = useCart();
-//   const { isAuthenticated } = useAuth();
-//   const [note, setNote] = useState("");
-//   const [placing, setPlacing] = useState(false);
-//   const [error, setError] = useState(null);
-//   const [confirmation, setConfirmation] = useState(null);
-
-//   const handlePlaceOrder = async () => {
-//     setError(null);
-//     setPlacing(true);
-
-//     try {
-//       setConfirmation(await placeOrder(note.trim()));
-//       setNote("");
-//     } catch (cause) {
-//       setError(
-//         cause instanceof ApiError
-//           ? cause.messages.join(" ")
-//           : "Could not place the order. Please try again.",
-//       );
-//     } finally {
-//       setPlacing(false);
-//     }
-//   };
-
-//   return (
-//     <div className="cart-overlay" role="dialog" aria-label="Your order">
-//       <button
-//         type="button"
-//         className="cart-scrim"
-//         aria-label="Close cart"
-//         onClick={onClose}
-//       />
-
-//       <aside className="cart-drawer">
-//         <header className="cart-header">
-//           <h3>Your order</h3>
-//           <button type="button" className="cart-close" onClick={onClose} aria-label="Close">
-//             <CloseIcon />
-//           </button>
-//         </header>
-
-//         {confirmation ? (
-//           <div className="cart-body">
-//             <p className="cart-success">
-//               Order #{confirmation.id} placed — {formatPrice(confirmation.total_price)}
-//             </p>
-//             <p className="cart-hint">
-//               Status: {confirmation.status}. Track it on your{" "}
-//               <Link to="/orders">orders page</Link>.
-//             </p>
-//           </div>
-//         ) : isEmpty ? (
-//           <div className="cart-body">
-//             <p className="cart-hint">Your cart is empty. Add something from the menu.</p>
-//           </div>
-//         ) : (
-//           <>
-//             <div className="cart-body">
-//               <ul className="cart-lines">
-//                 {lines.map(({ item, quantity }) => (
-//                   <li key={item.id} className="cart-line">
-//                     <div className="cart-line-main">
-//                       <ProductImage
-//                         className="cart-line-image"
-//                         src={item.image_url}
-//                         alt={item.name}
-//                       />
-
-//                       <div className="cart-line-info">
-//                         <span className="cart-line-name">{item.name}</span>
-//                         <span className="cart-line-price">
-//                           {formatPrice(Number(item.price) * quantity)}
-//                         </span>
-//                       </div>
-//                     </div>
-
-//                     <div className="cart-line-controls">
-//                       <button
-//                         type="button"
-//                         onClick={() => setQuantity(item.id, quantity - 1)}
-//                         aria-label={`Decrease ${item.name}`}
-//                       >
-//                         −
-//                       </button>
-//                       <span className="cart-qty">{quantity}</span>
-//                       <button
-//                         type="button"
-//                         onClick={() => setQuantity(item.id, quantity + 1)}
-//                         aria-label={`Increase ${item.name}`}
-//                       >
-//                         +
-//                       </button>
-//                       <button
-//                         type="button"
-//                         className="cart-remove"
-//                         onClick={() => remove(item.id)}
-//                       >
-//                         Remove
-//                       </button>
-//                     </div>
-//                   </li>
-//                 ))}
-//               </ul>
-
-//               <label className="cart-note">
-//                 <span>Note for the kitchen</span>
-//                 <textarea
-//                   rows={2}
-//                   value={note}
-//                   onChange={(e) => setNote(e.target.value)}
-//                   placeholder="Optional"
-//                 />
-//               </label>
-//             </div>
-
-//             <footer className="cart-footer">
-//               {error && <p className="cart-error" role="alert">{error}</p>}
-
-//               <div className="cart-total">
-//                 <span>Total</span>
-//                 <strong>{formatPrice(total)}</strong>
-//               </div>
-
-//               {isAuthenticated ? (
-//                 <button
-//                   type="button"
-//                   className="btn-primary cart-submit"
-//                   onClick={handlePlaceOrder}
-//                   disabled={placing}
-//                 >
-//                   {placing ? "Placing order…" : "Place order"}
-//                 </button>
-//               ) : (
-//                 <Link to="/login" className="btn-primary cart-submit">
-//                   Log in to order
-//                 </Link>
-//               )}
-//             </footer>
-//           </>
-//         )}
-//       </aside>
-//     </div>
-//   );
-// }
-
 /* ---------------- Page ---------------- */
 
 export default function HomePage() {
@@ -318,7 +140,6 @@ export default function HomePage() {
   const trackRef = useRef(null);
 
   const { items, loading, error } = useMenuItems();
-  const { user, isAuthenticated, logout } = useAuth();
   const cart = useCart();
 
   const scrollNext = () => {
@@ -353,81 +174,7 @@ export default function HomePage() {
     >
       {/* ---------- Navbar ---------- */}
       <Navbar />
-      {/* <header className="navbar">
-        <a href="#home" className="brand">
-          <span className="brand-icon">
-            <CupLogo />
-          </span>
-          <span className="brand-name">Maison Café</span>
-        </a>
-
-        <nav className={`nav-links ${menuOpen ? "is-open" : ""}`}>
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className={`nav-link ${link.label === "Home" ? "is-active" : ""}`}
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-              {link.dropdown && <ChevronDown />}
-            </a>
-          ))}
-        </nav>
-
-        <div className="nav-actions">
-        <button
-            type="button"
-            className="cart-btn"
-            aria-label={`Cart, ${cart.count} item${cart.count === 1 ? "" : "s"}`}
-            onClick={() => setCartOpen(true)}
-        >
-            <CartIcon />
-            <span className="cart-badge">{cart.count}</span>
-        </button>
-
-        <button type="button" className="btn-outline">
-            Book a Table
-        </button>
-
-        {isAuthenticated ? (
-          <>
-            <Link to="/orders" className="btn-outline">
-                My Orders
-            </Link>
-            <span className="nav-user" title={user?.email || undefined}>
-                {user?.first_name || user?.username}
-            </span>
-            <button type="button" className="btn-outline" onClick={logout}>
-                Log Out
-            </button>
-          </>
-        ) : (
-          <>
-          <Link to="/login" className="btn-outline btn-login">
-              Login
-          </Link>
-          
-          <Link to="/Register" className="btn-outline btn-Register">
-              Register
-          </Link>
-          </>
-          
-        )}
-
-        <button
-            type="button"
-            className="burger"
-            aria-label="Toggle navigation"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-        >
-            <span />
-            <span />
-            <span />
-        </button>
-        </div>
-      </header> */}
+      
 
       {/* ---------- Hero ---------- */}
       <section className="hero" id="home">
@@ -506,7 +253,7 @@ export default function HomePage() {
         )}
 
         <div className="picks-track" ref={trackRef}>
-          {items.map((item, index) => (
+          {items.map((item) => (
             <article key={item.id} className="product-card">
               <div className="product-media">
                 <ProductImage
