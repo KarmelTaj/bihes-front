@@ -4,14 +4,7 @@ import { colors } from "../theme/colors";
 import { fetchMenuItems, recommendMenu } from "../api/menu";
 import { ApiError } from "../api/client";
 import { useCart } from "../cart/useCart";
-//import { useAuth } from "../auth/useAuth";
 import { formatPrice } from "../lib/format";
-
-import bbqUrl from "../assets/products/bbq-chicken-pizza.jpg";
-import margheritaUrl from "../assets/products/margherita-pizza.jpg";
-import pepperoniUrl from "../assets/products/pepperoni-pizza.jpg";
-import veggieUrl from "../assets/products/veggie-supreme.jpg";
-
 import "./MenuPage.css";
 import Navbar from "../components/Navbar";
 import ProductImage from "../components/ProductImage";

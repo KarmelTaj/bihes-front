@@ -35,7 +35,7 @@
   cursor: pointer;
 }
 
-.menu-page a {
+a {
   color: inherit;
   text-decoration: none;
 }
@@ -71,9 +71,9 @@
   border-bottom: 1px solid rgba(200, 164, 93, 0.1);
 }
 
-.home .btn-primary,
-.home .btn-outline,
-.home .btn-ghost {
+.btn-primary,
+.btn-outline,
+.btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -709,6 +709,54 @@
 }
 
 .menu-add-btn {
+  appearance: none;
+  -webkit-appearance: none;
+
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+
+  padding: 0;
+  margin: 0;
+
+  border: none;
+  outline: none;
+  border-radius: 50%;
+
+  background: var(--primary);
+  color: #1b1108;
+
+  line-height: 1;
+  cursor: pointer;
+
+  flex-shrink: 0;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.menu-add-btn svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.menu-add-btn:hover {
+  background: #e6cf9a;
+  transform: rotate(90deg);
+}
+
+.menu-add-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* .menu-add-btn {
   display: grid;
   place-items: center;
 
@@ -728,7 +776,7 @@
 .menu-add-btn:hover {
   background: #e6cf9a;
   transform: rotate(90deg);
-}
+} */
 
 /* ============================================================
    Loading / empty / error
@@ -825,7 +873,7 @@
   background:
     linear-gradient(
       135deg,
-      var(--primary),
+      red,
       var(--primary-dark)
     );
 

@@ -134,6 +134,9 @@ export default function CartDrawer({ onClose }) {
                     </div>
 
                     <div className="cart-line-controls">
+
+                    <div className="cart-quantity">
+
                       <button
                         type="button"
                         onClick={() => setQuantity(item.id, quantity - 1)}
@@ -141,7 +144,9 @@ export default function CartDrawer({ onClose }) {
                       >
                         −
                       </button>
-                      <span className="cart-qty">{quantity}</span>
+
+                      <span>{quantity}</span>
+
                       <button
                         type="button"
                         onClick={() => setQuantity(item.id, quantity + 1)}
@@ -149,14 +154,18 @@ export default function CartDrawer({ onClose }) {
                       >
                         +
                       </button>
-                      <button
-                        type="button"
-                        className="cart-remove"
-                        onClick={() => remove(item.id)}
-                      >
-                        Remove
-                      </button>
+
                     </div>
+
+                    <button
+                      type="button"
+                      className="cart-remove"
+                      onClick={() => remove(item.id)}
+                    >
+                      Remove
+                    </button>
+
+                  </div>
                   </li>
                 ))}
               </ul>

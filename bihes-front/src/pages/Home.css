@@ -538,6 +538,54 @@
 }
 
 .add-btn {
+  appearance: none;
+  -webkit-appearance: none;
+
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+
+  padding: 0;
+  margin: 0;
+
+  border: none;
+  outline: none;
+  border-radius: 50%;
+
+  background: var(--primary);
+  color: #1b1108;
+
+  line-height: 1;
+  cursor: pointer;
+
+  flex-shrink: 0;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.add-btn svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.add-btn:hover {
+  background: #e6cf9a;
+  transform: rotate(90deg);
+}
+
+.add-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* .add-btn {
   display: grid;
   place-items: center;
   width: 36px;
@@ -551,7 +599,7 @@
 .add-btn:hover {
   background: #E6CF9A;
   transform: rotate(90deg);
-}
+} */
 
 /* ============================================================
    Reservation banner
@@ -828,7 +876,7 @@
 }
 
 /* ---------- Cart drawer ---------- */
-
+/* 
 .cart-overlay {
   position: fixed;
   inset: 0;
@@ -966,14 +1014,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.cart-line-controls .cart-remove {
-  width: auto;
-  margin-left: auto;
-  padding: 0 10px;
-  font-size: 0.78rem;
-  color: var(--text-2);
-  border-color: transparent;
-}
+
 
 .cart-note {
   display: block;
@@ -1027,9 +1068,21 @@
 .cart-submit {
   width: 100%;
   justify-content: center;
+} */
+
+
+.cart-line-controls .cart-remove {
+  width: auto;
+  margin-left: auto;
+  padding: 0 10px;
+  font-size: 0.78rem;
+  color: var(--text-2);
+  border-color: transparent;
 }
 
 /* ---------- Accessibility ---------- */
+
+
 
 @media (prefers-reduced-motion: reduce) {
   .home *,
