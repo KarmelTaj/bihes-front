@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-
 import { useAuth } from "../auth/useAuth";
 import { useCart } from "../cart/useCart";
 
@@ -75,6 +74,19 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenCart = () => {
+      setCartOpen(true);
+    };
+
+    window.addEventListener("open-cart", handleOpenCart);
+
+    return () => {
+      window.removeEventListener("open-cart", handleOpenCart);
+    };
+  }, []);
+
 
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const cart = useCart();

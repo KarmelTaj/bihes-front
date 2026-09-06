@@ -11,11 +11,10 @@ import bbqUrl from "../assets/products/bbq-chicken-pizza.jpg";
 import margheritaUrl from "../assets/products/margherita-pizza.jpg";
 import pepperoniUrl from "../assets/products/pepperoni-pizza.jpg";
 import veggieUrl from "../assets/products/veggie-supreme.jpg";
-import FALLBACK_IMAGE from "../assets/Logo.png";
 
 import "./MenuPage.css";
 import Navbar from "../components/Navbar";
-
+import ProductImage from "../components/ProductImage";
 /* ------------------------------------------------------------
    Icons
 ------------------------------------------------------------ */
@@ -130,15 +129,9 @@ const ChevronDown = () => (
    Images
 ------------------------------------------------------------ */
 
-const FALLBACK_IMAGES = [
-  bbqUrl,
-  margheritaUrl,
-  pepperoniUrl,
-  veggieUrl,
-];
 
-const productImage = (item, index) =>
-  item.image_url || FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
+
+
 
 /* ------------------------------------------------------------
    Page
@@ -277,6 +270,10 @@ export default function MenuPage() {
 
   const addToCart = (item) => {
     cart.add(item);
+
+    window.dispatchEvent(
+      new CustomEvent("open-cart")
+    );
   };
 
   const applyRecommendationResponse = (data) => {
@@ -613,14 +610,19 @@ export default function MenuPage() {
                 <div className="menu-ai-results">
                   {aiItems.map((item, index) => (
                     <article key={item.id} className="menu-ai-result-card">
-                      <img
+                      <ProductImage
+                                        className="product-img"
+                                        src={item.image_url}
+                                        alt={item.name}
+                                      />  
+                      {/* <img
                         src={productImage(item, index)}
                         alt={item.name}
                         onError={(event) => {
                           event.currentTarget.onerror = null;
                           event.currentTarget.src = FALLBACK_IMAGE;
                         }}
-                      />
+                      /> */}
                       <div className="menu-ai-result-body">
                         <div className="menu-ai-result-meta">
                           <span>{item.category_name || "Menu"}</span>
@@ -800,7 +802,12 @@ export default function MenuPage() {
                   className="menu-product-card"
                 >
                   <div className="menu-product-media">
-                    <img
+                    <ProductImage
+                                        className="product-img"
+                                        src={item.image_url}
+                                        alt={item.name}
+                                      />
+                    {/* <img
                       src={productImage(item, index)}
                       alt={item.name}
                       className="menu-product-img"
@@ -809,7 +816,7 @@ export default function MenuPage() {
                         event.currentTarget.src =
                           FALLBACK_IMAGE;
                       }}
-                    />
+                    /> */}
 
                     {item.category_name && (
                       <span className="menu-product-category">
