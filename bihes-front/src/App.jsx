@@ -6,6 +6,7 @@ import HomePage from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Orders from "./pages/Orders";
+import Reservations from "./pages/Reservations";
 import Menu from "./pages/MenuPage"
 import Admin from "./pages/Admin";
 import RequireAdmin from "./routes/RequireAdmin";
@@ -34,6 +35,14 @@ export default function App() {
               element={
                 <RequireAuth>
                   <Orders />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/reservations"
+              element={
+                <RequireAuth>
+                  <Reservations />
                 </RequireAuth>
               }
             />

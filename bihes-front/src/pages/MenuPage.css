@@ -871,11 +871,7 @@ a {
   color: #1b1108;
 
   background:
-    linear-gradient(
-      135deg,
-      red,
-      var(--primary-dark)
-    );
+    linear-gradient(135deg, var(--primary), var(--primary-dark));
 
   box-shadow:
     0 12px 30px -12px

@@ -203,10 +203,10 @@ export default function HomePage() {
               Explore Menu
               
             </a> */}
-            <button type="button" className="btn-ghost">
+            <Link to="/reservations" className="btn-ghost">
               <CalendarIcon />
               Book a Table
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -301,10 +301,10 @@ export default function HomePage() {
             Enjoy our cozy ambiance and delicious flavors with the people you
             love the most.
           </p>
-          <button type="button" className="btn-primary">
+          <Link to="/reservations" className="btn-primary">
             <CalendarIcon />
             Book a Table
-          </button>
+          </Link>
         </div>
       </section>
 

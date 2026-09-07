@@ -8,44 +8,12 @@ import { formatPrice } from "../lib/format";
 import "./MenuPage.css";
 import Navbar from "../components/Navbar";
 import ProductImage from "../components/ProductImage";
+
+
 /* ------------------------------------------------------------
    Icons
 ------------------------------------------------------------ */
 
-// const CupLogo = () => (
-//   <svg
-//     viewBox="0 0 48 40"
-//     width="34"
-//     height="30"
-//     fill="none"
-//     stroke="currentColor"
-//     strokeWidth="2"
-//     strokeLinecap="round"
-//     strokeLinejoin="round"
-//   >
-//     <path d="M8 14h26v10a10 10 0 0 1-10 10h-6A10 10 0 0 1 8 24V14Z" />
-//     <path d="M34 17h3a5 5 0 0 1 0 10h-3" />
-//     <path d="M6 38h30" />
-//     <path d="M16 9c0-2 2-2 2-4M23 9c0-2 2-2 2-4M30 9c0-2 2-2 2-4" />
-//   </svg>
-// );
-
-// const CartIcon = () => (
-//   <svg
-//     viewBox="0 0 24 24"
-//     width="21"
-//     height="21"
-//     fill="none"
-//     stroke="currentColor"
-//     strokeWidth="1.7"
-//     strokeLinecap="round"
-//     strokeLinejoin="round"
-//   >
-//     <circle cx="9" cy="20" r="1.4" />
-//     <circle cx="18" cy="20" r="1.4" />
-//     <path d="M2 3h2.5l2.4 12.2a2 2 0 0 0 2 1.6h8.3a2 2 0 0 0 2-1.6L21 7H6" />
-//   </svg>
-// );
 
 const PlusIcon = () => (
   <svg
@@ -411,7 +379,7 @@ export default function MenuPage() {
             </span>
           </button>
 
-          <Link to="/#contact" className="menu-btn-outline">
+          <Link to="/reservations" className="menu-btn-outline">
             Book a Table
           </Link>
 
@@ -601,7 +569,7 @@ export default function MenuPage() {
                 </p>
               ) : (
                 <div className="menu-ai-results">
-                  {aiItems.map((item, index) => (
+                  {aiItems.map((item) => (
                     <article key={item.id} className="menu-ai-result-card">
                       <ProductImage
                                         className="product-img"
@@ -789,7 +757,7 @@ export default function MenuPage() {
           !error &&
           filteredItems.length > 0 && (
             <div className="menu-grid">
-              {filteredItems.map((item, index) => (
+              {filteredItems.map((item) => (
                 <article
                   key={item.id}
                   className="menu-product-card"
@@ -871,7 +839,7 @@ export default function MenuPage() {
           with the people you love.
         </p>
 
-        <Link to="/#contact" className="menu-btn-primary">
+        <Link to="/reservations" className="menu-btn-primary">
           Book a Table
         </Link>
       </section>

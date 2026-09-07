@@ -172,8 +172,10 @@ export default function Navbar() {
           {/* Book table */}
 
           <Link
-            to="/#contact"
-            className="btn-outline"
+            to="/reservations"
+            className={`btn-outline nav-book-btn ${
+              location.pathname === "/reservations" ? "is-active" : ""
+            }`}
           >
             Book a Table
           </Link>
