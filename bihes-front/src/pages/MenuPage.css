@@ -915,12 +915,16 @@ a {
   border: 1px solid
     rgba(200, 164, 93, 0.14);
 
-  background:
+
+  background:url("../assets/reservation.png");
+  background-size: cover;
+
+  /* background:
     linear-gradient(
       135deg,
       rgba(200, 164, 93, 0.08),
       rgba(111, 78, 55, 0.08)
-    );
+    ); */
 }
 
 .menu-cta-glow {
