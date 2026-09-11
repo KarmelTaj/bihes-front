@@ -1,10 +1,4 @@
-/**
- * Holds the signed-in user for the whole app.
- *
- * Tokens live in the client's tokenStore; this context owns the *user* those
- * tokens represent, restores the session on a page reload, and clears itself
- * when a refresh fails.
- */
+
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -14,8 +8,7 @@ import { AuthContext } from "./context";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  // "loading" until we know whether a stored token still identifies someone —
-  // routes that redirect on anonymity must not act before that resolves.
+
   const [status, setStatus] = useState(tokenStore.access ? "loading" : "anonymous");
 
   // Restore the session on mount when a token is already in storage.

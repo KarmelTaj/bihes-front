@@ -108,7 +108,7 @@ export default function LoginPage() {
     }
   };
 
-  // Already signed in — nothing to do on this page.
+
   if (!isLoading && isAuthenticated) return <Navigate to={destination} replace />;
 
   const identifierError = error?.fieldError("username");

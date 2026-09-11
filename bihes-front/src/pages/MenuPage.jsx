@@ -10,9 +10,7 @@ import Navbar from "../components/Navbar";
 import ProductImage from "../components/ProductImage";
 
 
-/* ------------------------------------------------------------
-   Icons
------------------------------------------------------------- */
+// ------------------------ icons ------------------
 
 
 const PlusIcon = () => (
@@ -74,29 +72,9 @@ const ChevronDown = () => (
   </svg>
 );
 
-/* ------------------------------------------------------------
-   Navigation
------------------------------------------------------------- */
-
-// const NAV_LINKS = [
-//   { label: "Home", href: "/" },
-//   { label: "Menu", href: "/menu" },
-//   { label: "About", href: "/#about" },
-//   { label: "Pages", href: "#", dropdown: true },
-//   { label: "Contact", href: "/#contact" },
-// ];
-
-/* ------------------------------------------------------------
-   Images
------------------------------------------------------------- */
+// ------------------------ Page ------------------
 
 
-
-
-
-/* ------------------------------------------------------------
-   Page
------------------------------------------------------------- */
 
 export default function MenuPage() {
   //const [menuOpen, setMenuOpen] = useState(false);
@@ -118,9 +96,8 @@ export default function MenuPage() {
   const cart = useCart();
   // const { user, isAuthenticated, logout } = useAuth();
 
-  /* ----------------------------------------------------------
-     Load menu
-  ---------------------------------------------------------- */
+  // ------------------------ Load menu ------------------
+
 
   useEffect(() => {
     let active = true;
@@ -158,9 +135,9 @@ export default function MenuPage() {
     };
   }, []);
 
-  /* ----------------------------------------------------------
-     Categories
-  ---------------------------------------------------------- */
+
+    // ------------------------ Categories ------------------
+
 
   const categories = useMemo(() => {
     const map = new Map();
@@ -179,9 +156,10 @@ export default function MenuPage() {
     return Array.from(map.values());
   }, [items]);
 
-  /* ----------------------------------------------------------
-     Filtering + sorting
-  ---------------------------------------------------------- */
+
+  // ------------------------ Filtering + sorting ------------------
+
+
 
   const filteredItems = useMemo(() => {
     let result = items.filter((item) => item.is_available !== false);
@@ -225,9 +203,9 @@ export default function MenuPage() {
     return result;
   }, [items, activeCategory, search, sort]);
 
-  /* ----------------------------------------------------------
-     Cart
-  ---------------------------------------------------------- */
+
+    // ------------------------ Cart ------------------
+
 
   const addToCart = (item) => {
     cart.add(item);
@@ -328,117 +306,13 @@ export default function MenuPage() {
         "--accent": colors.accent,
       }}
     >
-      {/* ======================================================
-          Navbar
-      ====================================================== */}
+
       <Navbar />
-      {/* <header className="menu-navbar">
-        <Link to="/" className="menu-brand">
-          <span className="menu-brand-icon">
-            <CupLogo />
-          </span>
+      
 
-          <span className="menu-brand-name">
-            Maison Café
-          </span>
-        </Link>
 
-        <nav className={`menu-nav-links ${menuOpen ? "is-open" : ""}`}>
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.label}
-              to={link.href}
-              className={`menu-nav-link ${
-                link.label === "Menu" ? "is-active" : ""
-              }`}
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
+      {/* // ------------------------ Hero ------------------ */}
 
-              {link.dropdown && <ChevronDown />}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="menu-nav-actions">
-          <button
-            type="button"
-            className="menu-cart-btn"
-            aria-label={`Cart, ${cart.count} item${
-              cart.count === 1 ? "" : "s"
-            }`}
-            onClick={() => {
-              // If you already have a global cart drawer,
-              // connect this button to it.
-              window.dispatchEvent(new CustomEvent("open-cart"));
-            }}
-          >
-            <CartIcon />
-            <span className="menu-cart-badge">
-              {cart.count}
-            </span>
-          </button>
-
-          <Link to="/reservations" className="menu-btn-outline">
-            Book a Table
-          </Link>
-
-          {isAuthenticated ? (
-            <>
-              <Link to="/orders" className="menu-btn-outline">
-                My Orders
-              </Link>
-
-              <span
-                className="menu-nav-user"
-                title={user?.email || undefined}
-              >
-                {user?.first_name || user?.username}
-              </span>
-
-              <button
-                type="button"
-                className="menu-btn-outline"
-                onClick={logout}
-              >
-                Log Out
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="menu-btn-outline menu-login"
-              >
-                Login
-              </Link>
-
-              <Link
-                to="/Register"
-                className="menu-btn-outline"
-              >
-                Register
-              </Link>
-            </>
-          )}
-
-          <button
-            type="button"
-            className="menu-burger"
-            aria-label="Toggle navigation"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((value) => !value)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-        </div>
-      </header> */}
-
-      {/* ======================================================
-          Hero
-      ====================================================== */}
 
       <section className="menu-hero">
         <div className="menu-hero-glow" />
@@ -457,9 +331,9 @@ export default function MenuPage() {
         </p>
       </section>
 
-      {/* ======================================================
-          AI menu finder
-      ====================================================== */}
+
+      {/* // ------------------------ AI menu finder ------------------ */}
+
 
       <section className="menu-ai-section" aria-labelledby="menu-ai-title">
         <div className="menu-ai-card">
@@ -613,9 +487,8 @@ export default function MenuPage() {
         </div>
       </section>
 
-      {/* ======================================================
-          Menu controls
-      ====================================================== */}
+      {/* // ------------------------ Menu controls ------------------ */}
+
 
       <section className="menu-content">
         <div className="menu-controls">
@@ -684,9 +557,6 @@ export default function MenuPage() {
           </div>
         </div>
 
-        {/* ====================================================
-            Loading
-        ==================================================== */}
 
         {loading && (
           <div className="menu-state">
@@ -695,9 +565,7 @@ export default function MenuPage() {
           </div>
         )}
 
-        {/* ====================================================
-            Error
-        ==================================================== */}
+
 
         {!loading && error && (
           <div className="menu-state menu-state-error">
@@ -719,9 +587,6 @@ export default function MenuPage() {
           </div>
         )}
 
-        {/* ====================================================
-            Empty
-        ==================================================== */}
 
         {!loading &&
           !error &&
@@ -749,9 +614,10 @@ export default function MenuPage() {
             </div>
           )}
 
-        {/* ====================================================
-            Products
-        ==================================================== */}
+
+
+          {/* // ------------------------ Products ------------------ */}
+
 
         {!loading &&
           !error &&
@@ -817,9 +683,8 @@ export default function MenuPage() {
           )}
       </section>
 
-      {/* ======================================================
-          Bottom CTA
-      ====================================================== */}
+        
+        {/* // ------------------------ Bottom CTA ------------------ */}
 
       <section className="menu-cta">
         <div className="menu-cta-glow" />

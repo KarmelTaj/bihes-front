@@ -2,13 +2,7 @@
 
 import { apiFetch, fetchAllPages } from "./client";
 
-/**
- * Menu items, newest page-set flattened into one array.
- *
- * Reads are anonymous-friendly (`auth: false` skips the Authorization header
- * so a stale token can't turn a public list into a 401), and the default
- * filter hides items an admin has marked unavailable.
- */
+
 export function fetchMenuItems({ available = true, category } = {}) {
   return fetchAllPages("/menu/menu-items/", {
     auth: false,
@@ -55,11 +49,7 @@ export function deleteCategory(id) {
 }
 
 
-/**
- * Natural-language menu recommendation.
- * Send { question } for the first pass, then { tokens } when the customer
- * toggles/removes chips so the transformer does not need to run again.
- */
+
 export function recommendMenu(payload) {
   return apiFetch("/menu/recommend/", {
     method: "POST",

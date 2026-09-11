@@ -1,8 +1,4 @@
-/* ============================================================
-   Maison Café — Table Reservations
-   Everything is scoped to .reservations-page so this page cannot leak styles
-   into Home, Menu, Navbar or CartDrawer.
-   ============================================================ */
+
 
 .reservations-page {
   min-height: 100vh;

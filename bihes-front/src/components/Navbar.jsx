@@ -94,11 +94,19 @@ export default function Navbar() {
 
   const isActive = (label) => {
     if (label === "Home") {
-      return location.pathname === "/";
+      return location.pathname === "/" && !location.hash;
     }
 
     if (label === "Menu") {
       return location.pathname === "/menu";
+    }
+
+    if (label === "About") {
+      return location.pathname === "/" && location.hash === "#about";
+    }
+
+    if (label === "Contact") {
+      return location.pathname === "/" && location.hash === "#contact";
     }
 
     return false;

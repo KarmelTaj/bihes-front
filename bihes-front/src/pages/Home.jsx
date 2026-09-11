@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { colors } from "../theme/colors";
 import { fetchMenuItems } from "../api/menu";
 import { useCart } from "../cart/useCart";
@@ -136,11 +136,23 @@ function useMenuItems() {
 
 export default function HomePage() {
   //const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
   const [cartOpen, setCartOpen] = useState(false);
   const trackRef = useRef(null);
 
   const { items, loading, error } = useMenuItems();
   const cart = useCart();
+
+  useEffect(() => {
+    if (!location.hash) return;
+
+    const target = document.querySelector(location.hash);
+    if (target) {
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }, [location.hash]);
 
   const scrollNext = () => {
     const track = trackRef.current;
@@ -308,8 +320,55 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ---------- About ---------- */}
+      <section className="about-section" id="about">
+        <div className="about-copy">
+          <p className="section-label">OUR STORY</p>
+          <h2 className="section-title">Coffee Made for Meaningful Moments</h2>
+          <p className="about-text">
+            At Maison Café, we believe a great cup of coffee is more than a
+            drink — it is a reason to slow down, connect, and enjoy the moment.
+            We pair carefully selected ingredients with a warm atmosphere to
+            make every visit feel special.
+          </p>
+          <p className="about-text">
+            From your first morning espresso to an evening meal with friends,
+            our goal is simple: serve quality food and coffee with genuine
+            hospitality.
+          </p>
+          <Link to="/menu" className="btn-outline about-menu-btn">
+            Discover Our Menu
+            <ArrowRight />
+          </Link>
+        </div>
+
+        <div className="about-highlights" aria-label="Maison Café values">
+          <article className="about-highlight">
+            <BeanIcon />
+            <div>
+              <h3>Premium Ingredients</h3>
+              <p>Thoughtfully selected coffee, fresh food, and rich flavors.</p>
+            </div>
+          </article>
+          <article className="about-highlight">
+            <UsersIcon />
+            <div>
+              <h3>Made for Community</h3>
+              <p>A comfortable place for friends, families, and quiet moments.</p>
+            </div>
+          </article>
+          <article className="about-highlight">
+            <SmallCupIcon />
+            <div>
+              <h3>Crafted with Care</h3>
+              <p>Every order is prepared with attention to quality and detail.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
       {/* ---------- Stats ---------- */}
-      <section className="stats" id="about">
+      <section className="stats" aria-label="Maison Café statistics">
         {STATS.map((stat) => (
           <div key={stat.label} className="stat-item">
             <div className="stat-icon">{stat.icon}</div>
@@ -317,6 +376,44 @@ export default function HomePage() {
             <div className="stat-label">{stat.label}</div>
           </div>
         ))}
+      </section>
+
+      {/* ---------- Contact ---------- */}
+      <section className="contact-section" id="contact">
+        <div className="contact-heading">
+          <p className="section-label">GET IN TOUCH</p>
+          <h2 className="section-title">We Would Love to Hear From You</h2>
+          <p className="contact-intro">
+            Have a question about the menu, an order, or your next visit?
+            Reach out to the Maison Café team and we will be happy to help.
+          </p>
+        </div>
+
+        <div className="contact-grid">
+          <article className="contact-card">
+            <div className="contact-icon"><PinIcon /></div>
+            <h3>Visit Us</h3>
+            <p>Stop by your nearest Maison Café for coffee, food, and a cozy seat.</p>
+          </article>
+
+          <article className="contact-card">
+            <div className="contact-icon"><SmallCupIcon /></div>
+            <h3>Reservations</h3>
+            <p>Planning a visit? Reserve a table ahead of time in just a few clicks.</p>
+            <Link to="/reservations" className="contact-link">
+              Book a Table <ArrowRight />
+            </Link>
+          </article>
+
+          <article className="contact-card">
+            <div className="contact-icon"><UsersIcon /></div>
+            <h3>Need Help?</h3>
+            <p>For order or account questions, our team is ready to assist you.</p>
+            <Link to="/orders" className="contact-link">
+              View My Orders <ArrowRight />
+            </Link>
+          </article>
+        </div>
       </section>
 
       {cartOpen && <CartDrawer onClose={() => setCartOpen(false)} />}

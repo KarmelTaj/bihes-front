@@ -9,9 +9,7 @@ import { formatPrice } from "../lib/format";
 import "./CartDrawer.css";
 import ProductImage from "./ProductImage";
 
-/* ============================================================
-   Icons
-   ============================================================ */
+
 
 const CloseIcon = () => (
   <svg
@@ -28,32 +26,9 @@ const CloseIcon = () => (
   </svg>
 );
 
-/* ============================================================
-   Product image
-   ============================================================ */
 
-// function ProductImage({
-//   src,
-//   alt,
-//   ...props
-// }) {
-//   return (
-//     <img
-//       src={src}
-//       alt={alt}
-//       {...props}
-//       onError={(event) => {
-//         event.currentTarget.onerror = null;
-//         event.currentTarget.style.display =
-//           "none";
-//       }}
-//     />
-//   );
-// }
 
-/* ============================================================
-   Cart Drawer
-   ============================================================ */
+
 
 export default function CartDrawer({ onClose }) {
   const { lines, total, isEmpty, setQuantity, remove, placeOrder } = useCart();

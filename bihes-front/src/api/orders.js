@@ -1,10 +1,3 @@
-/**
- * Endpoints under `/orders/`.
- *
- * Note the doubled segment: the orders app is mounted at `/orders/` and its
- * router registers the `orders` viewset inside it, so the collection really
- * does live at `/orders/orders/`.
- */
 
 import { apiFetch, fetchAllPages } from "./client";
 
@@ -36,12 +29,7 @@ export function fetchOrder(id) {
   return apiFetch(`${COLLECTION}${id}/`);
 }
 
-/**
- * Place an order.
- *
- * `lines` is `[{ menuItemId, quantity }]`. The customer comes from the JWT,
- * and the backend snapshots each item's current price.
- */
+
 export function createOrder({ lines, note = "" }) {
   return apiFetch(COLLECTION, {
     method: "POST",

@@ -544,10 +544,7 @@
 
 /* ---- API feedback ---- */
 
-/* Button rules are scoped to .page: Home.css defines its own .btn-primary
-   and both stylesheets are global once the bundle loads. */
 
-/* General errors from the backend envelope (bad credentials, server down). */
 .form-alert {
     background-color: #fdf0ee;
     border: 1px solid #f0c4bc;
@@ -559,7 +556,6 @@
     line-height: 1.45;
 }
 
-/* A message the backend attached to one specific field. */
 .field-error {
     margin-top: 6px;
     color: #c0392b;
@@ -580,7 +576,6 @@
     background-color: white;
 }
 
-/* Two-up rows for the wider registration form. */
 .field-row {
     display: flex;
     gap: 12px;

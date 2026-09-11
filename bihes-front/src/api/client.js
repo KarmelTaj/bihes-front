@@ -1,14 +1,4 @@
-/**
- * Low-level HTTP client for the Bihes API.
- *
- * Owns the three things every call needs and no component should repeat:
- * where the API lives, the JWT (including silently refreshing an expired
- * access token), and turning the backend's error envelope into a throwable.
- */
 
-// In development this is the Vite proxy prefix (see vite.config.js), so calls
-// stay same-origin and no CORS setup is needed. Deployed builds point it at
-// the real API host via VITE_API_BASE_URL.
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(/\/+$/, "");
 
 const ACCESS_KEY = "bihes.access";
@@ -16,12 +6,7 @@ const REFRESH_KEY = "bihes.refresh";
 
 /* ---------------- Token storage ---------------- */
 
-/**
- * Which Web Storage holds the session is chosen at login: localStorage when
- * "Remember me" is ticked (survives a browser restart), sessionStorage
- * otherwise (dropped when the tab closes). Reads check both so the rest of the
- * app never has to care which one was used.
- */
+
 function readToken(key) {
   return localStorage.getItem(key) ?? sessionStorage.getItem(key);
 }
@@ -72,11 +57,7 @@ function notifySessionExpired() {
 
 /* ---------------- Errors ---------------- */
 
-/**
- * A failed API call. Mirrors the backend envelope from
- * `core/api/exceptions.custom_exception_handler`:
- * `{request_id, status_code, field_errors, general_errors}`.
- */
+
 export class ApiError extends Error {
   constructor({ status, requestId = null, fieldErrors = {}, generalErrors = [] }) {
     super(generalErrors[0] ?? "Something went wrong. Please try again.");
@@ -147,8 +128,7 @@ async function sendRequest(path, { method = "GET", body, token, signal } = {}) {
   }
 }
 
-// One refresh at a time: if several requests expire together they await the
-// same call instead of racing to spend the refresh token.
+
 let refreshInFlight = null;
 
 async function performRefresh() {
@@ -181,14 +161,7 @@ function refreshAccessToken() {
   return refreshInFlight;
 }
 
-/**
- * Call the API and return the parsed body.
- *
- * Attaches the access token unless `auth: false`. A 401 on an authenticated
- * call triggers one refresh-and-retry before giving up.
- *
- * @throws {ApiError} on any non-2xx response or transport failure.
- */
+
 export async function apiFetch(path, { auth = true, ...options } = {}) {
   let response = await sendRequest(path, {
     ...options,
@@ -221,13 +194,7 @@ function withQuery(path, params = {}) {
   return suffix ? `${path}?${suffix}` : path;
 }
 
-/**
- * Fetch every page of a paginated list endpoint and return the flat results.
- *
- * The `next` link DRF returns is an absolute URL built from the *backend's*
- * host, which the browser cannot follow through the dev proxy. So we page with
- * an explicit `?page=` instead and keep every request same-origin.
- */
+
 export async function fetchAllPages(path, { params = {}, ...options } = {}) {
   const results = [];
 

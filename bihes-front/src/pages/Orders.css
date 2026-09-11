@@ -1,6 +1,4 @@
-/* ============================================================
-   Orders — customer history and the admin status console.
-   ============================================================ */
+
 
 .orders-page {
   min-height: 100vh;
@@ -146,7 +144,6 @@
   border: 1px solid currentColor;
 }
 
-/* One tint per Order.Status value on the backend. */
 .order-status.is-pending { color: #d9a441; }
 .order-status.is-preparing { color: #6fa8dc; }
 .order-status.is-ready { color: #74c69d; }
@@ -226,7 +223,6 @@
   cursor: wait;
 }
 
-/* Shown by RequireAuth while the stored session is being restored. */
 .route-loading {
   min-height: 100vh;
   display: grid;

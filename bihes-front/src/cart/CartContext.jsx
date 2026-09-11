@@ -1,10 +1,4 @@
-/**
- * The in-progress order.
- *
- * Lines are held client-side until checkout; `placeOrder` is the only thing
- * that touches the API. Prices arrive from DRF as decimal *strings*, so they
- * are parsed once here and totals are computed in cents to avoid float drift.
- */
+
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
